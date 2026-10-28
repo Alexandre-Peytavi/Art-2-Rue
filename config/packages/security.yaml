@@ -5,16 +5,23 @@ security:
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
-
+        benevole_provider:
+            entity:
+                class: App\Entity\Benevole
+                property: email
     firewalls:
         dev:
             # Ensure dev tools and static assets are always allowed
-            pattern: ^/(_profiler(/|$)|(_wdt|assets|build)/)
+            pattern:  ^/(_profiler|_wdt|assets|build)/
             security: false
         main:
             lazy: true
-            provider: users_in_memory
+            provider: benevole_provider
+            custom_authenticator: App\Security\LoginFormAuthenticator
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                # target: app_any_route
 
             # Activate different ways to authenticate:
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -24,8 +31,7 @@ security:
 
     # Note: Only the *first* matching rule is applied
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        # - { path: ^/benevole, roles: ROLE_BENEVOLE }
 
 when@test:
     security:

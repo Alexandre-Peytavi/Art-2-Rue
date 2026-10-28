@@ -1,0 +1,180 @@
+<?php
+
+namespace App\Entity;
+
+use App\Repository\OeuvreRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: OeuvreRepository::class)]
+class Oeuvre
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column(length: 150)]
+    private ?string $titre = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTime $dateCreation = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column]
+    private ?bool $estDetruite = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Lieu $lieu = null;
+
+    /**
+     * @var Collection<int, Artiste>
+     */
+    #[ORM\ManyToMany(targetEntity: Artiste::class)]
+    private Collection $artistes;
+
+    /**
+     * @var Collection<int, Technique>
+     */
+    #[ORM\ManyToMany(targetEntity: Technique::class)]
+    private Collection $techniques;
+
+    #[ORM\ManyToOne(targetEntity: self::class)]
+    private ?self $oeuvreRecouverte = null;
+
+    public function __construct()
+    {
+        $this->artistes = new ArrayCollection();
+        $this->techniques = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getTitre(): ?string
+    {
+        return $this->titre;
+    }
+
+    public function setTitre(string $titre): static
+    {
+        $this->titre = $titre;
+
+        return $this;
+    }
+
+    public function getDateCreation(): ?\DateTime
+    {
+        return $this->dateCreation;
+    }
+
+    public function setDateCreation(?\DateTime $dateCreation): static
+    {
+        $this->dateCreation = $dateCreation;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function isEstDetruite(): ?bool
+    {
+        return $this->estDetruite;
+    }
+
+    public function setEstDetruite(bool $estDetruite): static
+    {
+        $this->estDetruite = $estDetruite;
+
+        return $this;
+    }
+
+    public function getLieu(): ?Lieu
+    {
+        return $this->lieu;
+    }
+
+    public function setLieu(?Lieu $lieu): static
+    {
+        $this->lieu = $lieu;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Artiste>
+     */
+    public function getArtistes(): Collection
+    {
+        return $this->artistes;
+    }
+
+    public function addArtiste(Artiste $artiste): static
+    {
+        if (!$this->artistes->contains($artiste)) {
+            $this->artistes->add($artiste);
+        }
+
+        return $this;
+    }
+
+    public function removeArtiste(Artiste $artiste): static
+    {
+        $this->artistes->removeElement($artiste);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Technique>
+     */
+    public function getTechniques(): Collection
+    {
+        return $this->techniques;
+    }
+
+    public function addTechnique(Technique $technique): static
+    {
+        if (!$this->techniques->contains($technique)) {
+            $this->techniques->add($technique);
+        }
+
+        return $this;
+    }
+
+    public function removeTechnique(Technique $technique): static
+    {
+        $this->techniques->removeElement($technique);
+
+        return $this;
+    }
+
+    public function getOeuvreRecouverte(): ?self
+    {
+        return $this->oeuvreRecouverte;
+    }
+
+    public function setOeuvreRecouverte(?self $oeuvreRecouverte): static
+    {
+        $this->oeuvreRecouverte = $oeuvreRecouverte;
+
+        return $this;
+    }
+}
